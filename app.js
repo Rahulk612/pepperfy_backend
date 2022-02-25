@@ -66,7 +66,6 @@ app.get("/pepperfry/beds",async(req,res)=>{
 
 app.post("/pepperfry/registration", async(req,res) => {
   try {
-    console.log(req.body)
     let user = await NewUsers.findOne({ email: req.body.email });
     if (user)
       return res
@@ -103,6 +102,8 @@ app.post("/pepperfry/login",async (req,res) => {
 
     if (!match)
       return res.status(401).send({ message: "Password is incorrect" });
+
+    res.status(201).send(user)
   }catch(err){
     res.status(500).send(err.message);
   }
