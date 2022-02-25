@@ -18,6 +18,15 @@ const Lamps = require("./src/modules/Products/lampsModel")
 const NewUsers = require("./src/modules/Products/UserModel")
 
 
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4090");
+  res.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS,PUT,DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept");
+
+  next();
+});
+
+
 app.get("/pepperfry/seettes", async (req, res) => {
   try {
     const products = await Seettes.find();
