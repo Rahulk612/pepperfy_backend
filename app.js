@@ -2,6 +2,9 @@ const express = require("express")
 
 const app = express();
 
+
+app.use(express.json());
+
 const connect = require("./src/configs/db")
 
 const Seettes = require("./src/modules/Products/SeettesModel")
@@ -13,6 +16,7 @@ const Home = require("./src/modules/Products/wfhModel")
 const Lamps = require("./src/modules/Products/lampsModel")
 
 const NewUsers = require("./src/modules/Products/UserModel")
+
 
 app.get("/pepperfry/seettes", async (req, res) => {
   try {
@@ -62,6 +66,7 @@ app.get("/pepperfry/beds",async(req,res)=>{
 
 app.post("/pepperfry/registration", async(req,res) => {
   try {
+    console.log(req.body)
     let user = await NewUsers.findOne({ email: req.body.email });
     if (user)
       return res
@@ -70,14 +75,19 @@ app.post("/pepperfry/registration", async(req,res) => {
 
     user = await NewUsers.create({
       name: req.body.name,
-      number: req.body.nubmer,
+      number: req.body.number,
       email: req.body.email,
       password: req.body.password,
     });
+
+
+    res.status(200).send(user)
   } catch (err) {
     res.status(500).send(err.message);
   }
 })
+
+
 
 
 app.post("/pepperfry/login",async (req,res) => {
