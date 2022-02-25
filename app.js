@@ -12,6 +12,8 @@ const Home = require("./src/modules/Products/wfhModel")
 
 const Lamps = require("./src/modules/Products/lampsModel")
 
+const NewUsers = require("./src/modules/Products/UserModel")
+
 app.get("/pepperfry/seettes", async (req, res) => {
   try {
     const products = await Seettes.find();
@@ -56,6 +58,47 @@ app.get("/pepperfry/beds",async(req,res)=>{
       res.status(500).send(err.message);
     }
 });
+
+
+app.post("/pepperfry/registration", async(req,res) => {
+  try {
+    let user = await NewUsers.findOne({ email: req.body.email });
+    if (user)
+      return res
+        .status(404)
+        .send("This email is already registered try new email");
+
+    user = await NewUsers.create({
+      name: req.body.name,
+      number: req.body.nubmer,
+      email: req.body.email,
+      password: req.body.password,
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+})
+
+
+app.post("/pepperfry/login",async (req,res) => {
+   try {
+    console.log("UserLogin");
+    let user = await NewUsers.findOne({
+      email: req.body.email,
+    });
+    if (!user) return res.status(404).send({ message: "Invalid user" });
+
+
+    const match = user.checkPassword(req.body.password);
+
+    if (!match)
+      return res.status(401).send({ message: "Password is incorrect" });
+  }catch(err){
+    res.status(500).send(err.message);
+  }
+})
+
+
 
 
 app.listen(process.env.PORT || 4090,async()=>{
