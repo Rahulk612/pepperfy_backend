@@ -99,6 +99,20 @@ app.post("/pepperfry/login",async (req,res) => {
 })
 
 
+app.get("/pepperfry/users",async(req,res) => {
+  try {
+    let users = await NewUsers.find();
+
+
+    res.status(200).send(users)
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+
+
 
 
 app.listen(process.env.PORT || 4090,async()=>{
