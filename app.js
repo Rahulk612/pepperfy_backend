@@ -17,6 +17,9 @@ const Lamps = require("./src/modules/Products/lampsModel")
 
 const NewUsers = require("./src/modules/Products/UserModel")
 
+const Cart = require("./src/modules/addCartModel")
+
+const Single = require("./src/modules/singleCartModel")
 
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:4090");
@@ -71,6 +74,7 @@ app.get("/pepperfry/beds",async(req,res)=>{
       res.status(500).send(err.message);
     }
 });
+
 
 
 app.post("/pepperfry/registration", async(req,res) => {
@@ -131,6 +135,53 @@ app.get("/pepperfry/users",async(req,res) => {
 });
 
 
+// Cart Items
+
+app.post("/pepperfry/cartItems",async(req,res)=>{
+  try {
+    const user = await NewUsers.findOne({ _id: req.body.user_id });
+    if (!user) return res.status(500).send("Invalid user or user not exist");
+
+    // console.log("user found",user.name)
+    const find = await Cart.findOne({user_id:req.body.user_id})
+    if (find) {
+      const single = await Single.create({item:req.body.item})
+      find.items.push(single);
+      let update = await Cart.findByIdAndUpdate(find._id,find,{new:true})
+      console.log(update)
+     return res.status(200).send(update)
+    }
+    const item = await Cart.create(req.body);
+    res.status(200).send(item);
+  } catch (err) {
+    console.log("error",err.message);
+  }
+})
+
+app.get("/pepperfry/cartItems/:id", async (req,res) => {
+  try {
+    const user = await NewUsers.findOne({_id:req.params.id})
+
+    if(!user) return res.status(400).send("Invalid user")
+
+    const items = await Cart.find({user_id:req.params.id})
+
+    res.status(200).send(items)
+  } catch (err) {
+    console.log(err.message);
+  }
+})
+
+app.get("/pepperfry/cartItems",async(req,res)=> {
+  try {
+
+    let items = await Cart.find();
+
+    res.status(200).send(items)
+  } catch (err) {
+    console.log(err.message);
+  }
+});
 
 
 
