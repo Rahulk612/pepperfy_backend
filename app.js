@@ -1,9 +1,13 @@
 const express = require("express")
-
+const cors = require("cors");
 const app = express();
 
-
 app.use(express.json());
+app.use(cors());
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const connect = require("./src/configs/db")
 
@@ -188,7 +192,7 @@ app.get("/pepperfry/cartItems",async(req,res)=> {
 
 app.listen(process.env.PORT || 4090,async()=>{
     try{
-    connect()
+    await connect()
     console.log("Server is Runnig 4090")
     }catch(err){
         console.log(err.message)
